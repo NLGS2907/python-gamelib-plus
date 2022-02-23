@@ -98,7 +98,7 @@ First, look into the provided examples!
 * [Game of Life](https://github.com/dessaya/python-gamelib/blob/master/example-03-life.py)
 * [Pong](https://github.com/dessaya/python-gamelib/blob/master/example-04-pong.py)
 
-Gamelib library reference: https://nlgs2907.github.io/python-gamelib-plus/
+Gamelib+ library reference: https://nlgs2907.github.io/python-gamelib-plus/
 
 To generate the HTML documentation:
 

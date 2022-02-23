@@ -1,29 +1,31 @@
 """
-Gamelib is a pure-Python single-file library/framework for writing simple games. It is
-intended for educational purposes (e.g. to be used in basic programming courses).
+Gamelib+ is an experimental fork of the [gamelib](https://github.com/dessaya/python-gamelib)
+library, which is slightly more feature-rich and with type-hinted source code, but maintaining
+the simplicity and portability of the original project.
 
-https://github.com/dessaya/python-gamelib
+<u>*Any* project built with gamelib should work with gamelib+ too!</u>
+
+https://github.com/NLGS2907/python-gamelib-plus
 """
 
-import tkinter as tk
-from tkinter.font import Font
-from tkinter import simpledialog, messagebox, Button
-from queue import Queue, Empty
-from enum import Enum
-import threading
-import time
-import signal
 import os
-import sys
-from typing import Any, Callable, Dict, List, Optional, Union, Tuple
-from logging import Logger, getLogger, Formatter, StreamHandler, INFO
+import signal
+from sys import excepthook, exc_info
+from threading import Thread, Event as ThreadEvent
+from time import time, sleep
+import tkinter as tk
+from enum import Enum
+from logging import INFO, Formatter, Logger, StreamHandler, getLogger
+from queue import Empty, Queue
+from tkinter import Button, messagebox, simpledialog
+from tkinter.font import Font
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 
 __all__ = ["wait", "get_events", "title", "icon", "draw_begin", "draw_image",
            "draw_text", "draw_arc", "draw_line", "draw_oval", "draw_polygon",
            "draw_rectangle", "draw_button", "draw_end", "resize", "say", "input",
-           "is_alive", "loop", "play_sound", "MessageType", "InvalidMessageType",
-           "EventType", "Event"]
+           "is_alive", "loop", "play_sound", "MessageType", "EventType", "Event"]
 
 
 class MessageType(Enum):
@@ -98,12 +100,16 @@ class Event:
     def __getattr__(self, k: str) -> Any:
         "Gets an attribute from `Event`."
 
-        if k == 'type':
+        if k == "type":
             return EventType[self.tkevent.type.name]
-        if k == 'key':
+        if k == "key":
             return self.tkevent.keysym
-        if k == 'mouse_button':
+        if k == "mouse_button":
             return self.tkevent.num
+        if k == "x":
+            return self.tkevent.x
+        if k == "y":
+            return self.tkevent.y
         return getattr(self.tkevent, k)
 
 
@@ -183,11 +189,11 @@ class _TkWindow(tk.Tk):
     "The window that will be used."
 
     instance: "_TkWindow" = None
-    initialized: threading.Event = threading.Event()
+    initialized: ThreadEvent = ThreadEvent()
     commands: Queue = Queue()
 
     busy_count: int = 0
-    idle: threading.Event = threading.Event()
+    idle: ThreadEvent = ThreadEvent()
     idle.set()
 
 
@@ -252,6 +258,10 @@ class _TkWindow(tk.Tk):
     def handle_event(self, tkevent: tk.Event) -> None:
         "Puts an event in the queue so it can be processed."
 
+        if any(isinstance(tkevent.widget, class_check) for class_check in [Button]):
+            tkevent.x = tkevent.x_root - self.canvas.winfo_rootx()
+            tkevent.y = tkevent.y_root - self.canvas.winfo_rooty()
+
         _GameThread.events.put(Event(tkevent))
 
 
@@ -294,10 +304,13 @@ class _TkWindow(tk.Tk):
     def draw_button(self, x: int, y: int, options) -> None:
         "Draws a button in the canvas."
 
+        if "image" in options:
+            options["image"] = self.get_image(options["image"])
+
         button = Button(master=self, **options)
         if (x, y) not in self.buttons and button["text"] not in (btn["text"] for btn in self.buttons.values()):
             self.buttons[(x, y)] = button
-            self.canvas.create_window(x, y, tag="window", window=button)
+            self.canvas.create_window(x, y, tags="window", window=button, anchor="c")
 
 
     def draw_text(self, text: str, x: int, y: int, font: str, size: int, bold: True, italic: True, kwargs) -> None:
@@ -362,8 +375,8 @@ def check_image_format(path: str) -> None:
 
 
 def check_audio_format(path: str) -> None:
-    
     "Produce a warning message if the audio format is not supported"
+
     ext = path[-4:].lower()
     if ext != ".wav":
         log.warning(f"{path}: audio format {ext} is not supported and may not work properly on some platforms (Windows/Mac/Linux).\n" +
@@ -384,7 +397,7 @@ def _audio_init() -> Callable[[str], None]:
 
         from ctypes import c_buffer, windll
         from random import random
-        from sys    import getfilesystemencoding
+        from sys import getfilesystemencoding
 
         def winCommand(*command: Tuple[str, ...]):
             "Executes a Windows Command."
@@ -411,7 +424,7 @@ def _audio_init() -> Callable[[str], None]:
     def _playsoundOSX(sound: str) -> None:
         "Plays a soundd for MacOS."
 
-        from AppKit     import NSSound
+        from AppKit import NSSound
         from Foundation import NSURL
 
         if '://' not in sound:
@@ -483,11 +496,11 @@ def _audio_init() -> Callable[[str], None]:
     return play_sound
 
 
-class _GameThread(threading.Thread):
+class _GameThread(Thread):
     "The game thread to be used."
 
     _instance: "_GameThread"
-    initialized: threading.Event
+    initialized: ThreadEvent
     events: Queue
 
 
@@ -496,7 +509,7 @@ class _GameThread(threading.Thread):
 
         if not hasattr(cls, "_instance"):
             cls._instance = super().__new__(cls)
-            cls.initialized= threading.Event()
+            cls.initialized= ThreadEvent()
             cls.events = Queue()
         return cls._instance
 
@@ -515,7 +528,7 @@ class _GameThread(threading.Thread):
         try:
             self.game_main(*self.args)
         except Exception as e:
-            sys.excepthook(*sys.exc_info())
+            excepthook(*exc_info())
         finally:
             self.send_command_to_tk('close', notify=True)
 
@@ -553,7 +566,7 @@ class _GameThread(threading.Thread):
             self.notify_tk()
 
 
-    def wait(self, event_type: bool=None) -> Optional[Event]:
+    def wait(self, event_types: Union[EventType, Tuple[EventType, ...], None]=None) -> Optional[Event]:
         """
         Wait until the next `Event`: a key is pressed/released, the mouse is moved, etc,
         and return it.
@@ -565,6 +578,8 @@ class _GameThread(threading.Thread):
             event_type: If an `EventType` is passed, the function will ignore any
                         events that are not of this type. (It will still return `None`
                         when the game is closed).
+                        It also accepts a tuple of event types, so it can listen to
+                        more than one type.
 
         Returns:
             An `Event`, or `None` if the user closed the game window.
@@ -582,7 +597,9 @@ class _GameThread(threading.Thread):
             return None
         while True:
             event = _GameThread.events.get()
-            if not event or not event_type or event.type == event_type:
+            if any((not event, not event_types,
+                   (isinstance(event_types, EventType) and event.type == event_types),
+                   (isinstance(event_types, Tuple) and event.type in event_types))):
                 return event
 
 
@@ -795,7 +812,14 @@ class _GameThread(threading.Thread):
         """
         Draws a button at the coordinates `x, y`.
 
-        To see all supportedd options, see the ocumentation for
+        Some of the supported options are:
+
+        * `text`: The text to display on this button.
+        * `background` or `bg`: Button Background fill color.
+        * `foreground` or `fg`: Button Text fill color.
+        * `command`: The handler function to be used as a callback for this button.
+
+        To see all supported options, see the documentation for
         [`tkinter.Button`](https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/button.html)
 
         Example:
@@ -897,10 +921,10 @@ class _GameThread(threading.Thread):
 
         frame_duration = 1.0 / fps
         a = _GameThread._last_loop_time
-        b = time.time()
+        b = time()
         if a:
-            time.sleep(max(0, frame_duration - (b - a)))
-        _GameThread._last_loop_time = time.time()
+            sleep(max(0, frame_duration - (b - a)))
+        _GameThread._last_loop_time = time()
         return self.is_alive()
 
 
