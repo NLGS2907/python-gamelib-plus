@@ -26,4 +26,5 @@ jobs:
         python -m pip install --upgrade pdoc3
     - name: Update index.html
       run: |
-        docs/generate.sh
+        chmod +x ./docs/generate.sh
+        ./docs/generate.sh
