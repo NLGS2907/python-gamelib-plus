@@ -1,7 +1,26 @@
-# Gamelib
+# Gamelib+
 
-Gamelib is a pure-Python single-file library/framework for writing simple games. It is
-intended for educational purposes (e.g. to be used in basic programming courses).
+Gamelib+ is an experimental fork of the [gamelib](https://github.com/dessaya/python-gamelib) library, which is slightly more feature-rich
+and with type-hinted source code, but maintaining the simplicity and
+portability of the original project.
+
+<u>*Any* project built with gamelib should work with gamelib+ too!</u>
+
+
+## What's different from gamelib?
+
+* **More prompts:** `gamelib.say` now supports an additional parameter
+`msg_type`, which lets you to have multiple types of ddifferent message
+boxes, like a yes/no box, a retry prompt, or a warning/error message.
+
+* **Buttons:** Gamelib+ draws Tkinter buttons *inside* a mini-window that
+the canvas contains, so it's still compatible with old projects and the
+current syntax.
+
+* *(...and more on the way)*
+
+
+## Example Uses
 
 Here is a "hello world" example:
 
@@ -51,6 +70,7 @@ def main():
 gamelib.init(main)
 ```
 
+
 ## Goals
 
 * **Easy to learn:** Writing a simple game should be almost as easy as writing console
@@ -62,10 +82,12 @@ gamelib.init(main)
   not depend on anything that's not available in a fresh Python installation.
   That rules out `pip`.
 
+
 ## Installation
 
-Just [download](https://raw.githubusercontent.com/dessaya/python-gamelib/master/gamelib.py)
+Just [download](https://raw.githubusercontent.com/nlgs2907/python-gamelib-plus/master/gamelib.py)
 `gamelib.py` and place it alongside your project :)
+
 
 ## Documentation
 
@@ -76,7 +98,7 @@ First, look into the provided examples!
 * [Game of Life](https://github.com/dessaya/python-gamelib/blob/master/example-03-life.py)
 * [Pong](https://github.com/dessaya/python-gamelib/blob/master/example-04-pong.py)
 
-Gamelib library reference: https://dessaya.github.io/python-gamelib/
+Gamelib library reference: https://nlgs2907.github.io/python-gamelib-plus/
 
 To generate the HTML documentation:
 
@@ -85,11 +107,13 @@ $ pip3 install pdoc3
 $ bash docs/generate.sh
 ```
 
+
 ## Run the examples
 
 ```
 $ python3 example-01-hello-world.py
 ```
+
 
 ## Limitations
 
