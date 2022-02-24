@@ -1,5 +1,5 @@
 # Generate html documentation from source code
-pdoc3 --force --html --config show_source_code=False gamelib -o docs
+pdoc3 --force --html --template-dir docs/templates gamelib -o docs
 
 # post process -- remove unnecessary class prefix
 sed -i 's/_GameThread\.//g' docs/gamelib.html > docs/index.html

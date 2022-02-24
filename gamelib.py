@@ -8,7 +8,8 @@ the simplicity and portability of the original project.
 https://github.com/NLGS2907/python-gamelib-plus
 """
 
-import os
+from os import _exit as os_exit, getcwd
+from os.path import abspath, splitext
 import signal
 from sys import excepthook, exc_info
 from threading import Thread, Event as ThreadEvent
@@ -296,9 +297,9 @@ class _TkWindow(tk.Tk):
     def draw(self, type: str, args, kwargs) -> None:
         "Draws a figure in the canvas."
 
-        options = {'fill': 'white', 'tag': 'figure'}
+        options = {"fill": "white", "tag": "figure"}
         options.update(kwargs)
-        getattr(self.canvas, f'create_{type}')(*args, **options)
+        getattr(self.canvas, f"create_{type}")(*args, **options)
 
 
     def draw_button(self, x: int, y: int, options) -> None:
@@ -310,7 +311,7 @@ class _TkWindow(tk.Tk):
         button = Button(master=self, **options)
         if (x, y) not in self.buttons and button["text"] not in (btn["text"] for btn in self.buttons.values()):
             self.buttons[(x, y)] = button
-            self.canvas.create_window(x, y, tags="window", window=button, anchor="c")
+            self.canvas.create_window(x, y, tags="window", window=button, anchor='c')
 
 
     def draw_text(self, text: str, x: int, y: int, font: str, size: int, bold: True, italic: True, kwargs) -> None:
@@ -330,7 +331,7 @@ class _TkWindow(tk.Tk):
         slant = "roman"
         if italic:
             slant = "italic"
-        name = f'font-{family}-{size}-{weight}-{slant}'
+        name = f"font-{family}-{size}-{weight}-{slant}"
         if name not in self.assets:
             self.assets[name] = Font(family=family, size=size, weight=weight, slant=slant)
         return self.assets[name]
@@ -367,7 +368,7 @@ class _TkWindow(tk.Tk):
 def check_image_format(path: str) -> None:
     "Produce a warning message if the image format is not supported"
 
-    ext = path[-4:].lower()
+    ext = splitext(path)[1].lower()
     supported = (".gif", ".ppm", ".pgm", ".pbm")
     if ext not in supported:
         log.warning(f"{path}: image format {ext} is not supported and may not work properly on some platforms (Windows/Mac/Linux).\n" +
@@ -377,7 +378,7 @@ def check_image_format(path: str) -> None:
 def check_audio_format(path: str) -> None:
     "Produce a warning message if the audio format is not supported"
 
-    ext = path[-4:].lower()
+    ext = splitext(path)[1].lower()
     if ext != ".wav":
         log.warning(f"{path}: audio format {ext} is not supported and may not work properly on some platforms (Windows/Mac/Linux).\n" +
                     f"Please use WAV.")
@@ -408,33 +409,33 @@ def _audio_init() -> Callable[[str], None]:
             if errorCode:
                 errorBuffer = c_buffer(255)
                 windll.winmm.mciGetErrorStringA(errorCode, errorBuffer, 254)
-                exceptionMessage = ('\n    Error ' + str(errorCode) + ' for command:'
-                                    '\n        ' + command.decode() +
-                                    '\n    ' + errorBuffer.value.decode(getfilesystemencoding(), 'ignore'))
+                exceptionMessage = ("\n    Error " + str(errorCode) + " for command:"
+                                    "\n        " + command.decode() +
+                                    "\n    " + errorBuffer.value.decode(getfilesystemencoding(), "ignore"))
                 raise PlaysoundException(exceptionMessage)
             return buf.value
 
-        alias = 'playsound_' + str(random())
-        winCommand('open "' + sound + '" alias', alias)
-        winCommand('set', alias, 'time format milliseconds')
-        durationInMS = winCommand('status', alias, 'length')
-        winCommand('play', alias, 'from 0 to', durationInMS.decode())
+        alias = "playsound_" + str(random())
+        winCommand("open \"" + sound + "\" alias", alias)
+        winCommand("set", alias, "time format milliseconds")
+        durationInMS = winCommand("status", alias, "length")
+        winCommand("play", alias, "from 0 to", durationInMS.decode())
 
 
     def _playsoundOSX(sound: str) -> None:
-        "Plays a soundd for MacOS."
+        "Plays a soundd for Mac"
 
         from AppKit import NSSound
         from Foundation import NSURL
 
-        if '://' not in sound:
+        if "://" not in sound:
             if not sound.startswith('/'):
-                sound = os.getcwd() + '/' + sound
-            sound = 'file://' + sound
+                sound = getcwd() + '/' + sound
+            sound = "file://" + sound
         url   = NSURL.URLWithString_(sound)
         nssound = NSSound.alloc().initWithContentsOfURL_byReference_(url, True)
         if not nssound:
-            raise IOError('Unable to load sound named: ' + sound)
+            raise IOError("Unable to load sound named: " + sound)
         nssound.play()
 
 
@@ -444,16 +445,16 @@ def _audio_init() -> Callable[[str], None]:
         from urllib.request import pathname2url
 
         import gi
-        gi.require_version('Gst', '1.0')
+        gi.require_version("Gst", "1.0")
         from gi.repository import Gst
 
         Gst.init(None)
 
-        playbin = Gst.ElementFactory.make('playbin', 'playbin')
-        if sound.startswith(('http://', 'https://')):
+        playbin = Gst.ElementFactory.make("playbin", "playbin")
+        if sound.startswith(("http://", "https://")):
             playbin.props.uri = sound
         else:
-            playbin.props.uri = 'file://' + pathname2url(os.path.abspath(sound))
+            playbin.props.uri = "file://" + pathname2url(abspath(sound))
 
         set_result = playbin.set_state(Gst.State.PLAYING)
         if set_result != Gst.StateChangeReturn.ASYNC:
@@ -987,8 +988,8 @@ def init(game_main: Callable[..., None], args=None) -> None:
         _GameThread._instance.join(1)
         if _GameThread().is_alive():
             log.info('Killing unresponsive game thread. Make sure to call get_events() or wait() periodically.')
-            os._exit(1)
-        os._exit(0)
+            os_exit(1)
+        os_exit(0)
 
 
 if __name__ == '__main__':

@@ -107,6 +107,13 @@ $ pip3 install pdoc3
 $ bash docs/generate.sh
 ```
 
+or:
+
+```
+$ pip3 install pdoc3
+$ docs/generate.bat
+```
+
 
 ## Run the examples
 
