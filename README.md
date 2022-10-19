@@ -43,32 +43,56 @@ gamelib.init(main)
 And this example shows a rectangle moving around the screen:
 
 ```python
+import random
 import gamelib
 
+WIDTH = 300
+HEIGHT = 300
+MARGIN = 5
+SQ_WIDTH = 20
+
+
+def _get_random_color():
+    "Generates a random HEX color."
+    return f"#{''.join(random.choice('0123456789abcdef') for _ in range(6))}"
+
+
 def main():
-    gamelib.resize(300, 300)
+    gamelib.resize(WIDTH, HEIGHT)
 
-    x, y = 150, 80
-    dx, dy = 5, 5
+    sq_x, sq_y = 150, 80
+    sq_color = _get_random_color()
+    x1, y1, x2, y2 = ((sq_x - SQ_WIDTH / 2), (sq_y - SQ_WIDTH / 2),
+                      (sq_x + SQ_WIDTH / 2), (sq_y + SQ_WIDTH / 2))
+    dx, dy = 5.0, 5.0
 
-    while gamelib.loop(fps=30):
+    while gamelib.loop():
         for event in gamelib.get_events():
             if event.type == gamelib.EventType.KeyPress and event.key == 'q':
                 return
 
         gamelib.draw_begin()
-        gamelib.draw_rectangle(x-10, y-10, x+10, y+10, fill='red')
+        gamelib.draw_rectangle(x1, y1, x2, y2, fill=sq_color)
         gamelib.draw_end()
 
-        x += dx
-        y += dy
-        if x > 300 or x < 0:
+        x1 += dx
+        y1 += dy
+        x2 += dx
+        y2 += dy
+        if x2 > WIDTH - MARGIN or x1 < MARGIN:
             dx *= -1
-        if y > 300 or y < 0:
+            sq_color = _get_random_color()
+        if y2 > HEIGHT - MARGIN or y1 < MARGIN:
             dy *= -1
+            sq_color = _get_random_color()
 
 gamelib.init(main)
 ```
+![bounce.gif](media/gifs/bounce.gif)
+
+
+### Other Examples
+![collision.gif](media/gifs/collision.gif)
 
 
 ## Goals
@@ -93,23 +117,24 @@ Just [download](https://raw.githubusercontent.com/nlgs2907/python-gamelib-plus/m
 
 First, look into the provided examples!
 
-* [Hello world](https://github.com/dessaya/python-gamelib/blob/master/example-01-hello-world.py)
-* [Bouncing square](https://github.com/dessaya/python-gamelib/blob/master/example-02-bounce.py)
-* [Game of Life](https://github.com/dessaya/python-gamelib/blob/master/example-03-life.py)
-* [Pong](https://github.com/dessaya/python-gamelib/blob/master/example-04-pong.py)
+* [Hello world](example-01-hello-world.py)
+* [Bouncing square](example-02-bounce.py)
+* [Game of Life](example-03-life.py)
+* [Pong](example-04-pong.py)
+* [Collision](example-05-collision.py)
 
 Gamelib+ library reference: https://nlgs2907.github.io/python-gamelib-plus/
 
 To generate the HTML documentation:
 
-```
+```console
 $ pip3 install pdoc3
 $ bash docs/generate.sh
 ```
 
 or:
 
-```
+```console
 $ pip3 install pdoc3
 $ docs/generate.bat
 ```
@@ -117,8 +142,8 @@ $ docs/generate.bat
 
 ## Run the examples
 
-```
-$ python3 example-01-hello-world.py
+```console
+$ python3 example-05-collision.py
 ```
 
 

@@ -7,6 +7,7 @@ import gamelib
 # size in pixels of a single cell
 CELL_SIZE = 10
 
+
 def life_create(map):
     life = []
     for r in map:
@@ -15,6 +16,7 @@ def life_create(map):
             row.append(c == '#')
         life.append(row)
     return life
+
 
 def neighbors(life, r, c):
     amount = 0
@@ -34,6 +36,7 @@ def neighbors(life, r, c):
             amount += 1
     return amount
 
+
 def cell_next(life, r, c):
     cell = life[r][c]
     n = neighbors(life, r, c)
@@ -49,6 +52,7 @@ def cell_next(life, r, c):
     # death by overpopulation
     return False
 
+
 def life_next(life):
     life_new = []
     for r in range(len(life)):
@@ -57,6 +61,7 @@ def life_next(life):
             row.append(cell_next(life, r, c))
         life_new.append(row)
     return life_new
+
 
 def draw(life):
     gamelib.draw_begin()
@@ -71,6 +76,7 @@ def draw(life):
                     fill='white',
                 )
     gamelib.draw_end()
+
 
 def main():
     gamelib.title("Game of life")

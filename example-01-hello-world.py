@@ -4,6 +4,7 @@ This example simply shows a message until the user presses a key.
 
 import gamelib
 
+
 def main():
     gamelib.resize(300, 300)
 

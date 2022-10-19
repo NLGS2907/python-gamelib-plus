@@ -25,28 +25,35 @@ VELOCITY = 150 / FPS
 
 State = namedtuple('State', ['paddles', 'ball_pos', 'ball_vel', 'score'])
 
-def move_paddle(state, p, dy):
+
+def move_paddle(state, paddle, dy):
+    "Handles vertical paddle movement."
     W, H = SIZE
     paddles = list(state.paddles)
-    y = paddles[p]
-    y += dy * VELOCITY * 1.5
-    if y < 0: y = 0
-    if y > H: y = H
-    paddles[p] = y
+    y1, y2 = paddles[paddle]
+    y1 += dy * VELOCITY * 1.5
+    y2 += dy * VELOCITY * 1.5
+    if y1 < 0 or y2 > H:
+        return state
+    paddles[paddle] = (y1, y2)
     return state._replace(paddles=tuple(paddles))
 
-def paddle_collision(state, p):
+
+def paddle_collision(state, paddle):
+    "Handles the ball-paddle collision."
     W, H = SIZE
     bx, by = state.ball_pos
 
-    py = state.paddles[p]
-    px = PADDLE_GAP if p == 0 else H - PADDLE_GAP
+    py1, py2 = state.paddles[paddle]
+    py_mid = (py1 + py2) / 2
+    px = PADDLE_GAP if paddle == PADDLE1 else H - PADDLE_GAP
 
-    if abs(bx - px) > PADDLE_WIDTH / 2 + BALL_RADIUS: return False
-    if abs(by - py) > PADDLE_HEIGHT / 2 + BALL_RADIUS: return False
-    return True
+    return not ((abs(bx - px) > PADDLE_WIDTH / 2 + BALL_RADIUS)
+                or (abs(by - py_mid) > PADDLE_HEIGHT / 2 + BALL_RADIUS))
+
 
 def move_ball(state):
+    "Moves the ball itself."
     W, H = SIZE
     x, y = state.ball_pos
     vx, vy = state.ball_vel
@@ -66,19 +73,23 @@ def move_ball(state):
 
     return state._replace(ball_pos=(x, y), ball_vel=(vx, vy))
 
-def draw_paddle(state, p):
+
+def draw_paddle(state, paddle):
+    "Draws one paddle element."
     W, H = SIZE
-    x = PADDLE_GAP if p == 0 else H - PADDLE_GAP
-    y = state.paddles[p]
+    x = PADDLE_GAP if paddle == 0 else H - PADDLE_GAP
+    y1, y2 = state.paddles[paddle]
     gamelib.draw_rectangle(
         x - PADDLE_WIDTH / 2,
-        y - PADDLE_HEIGHT / 2,
+        y1,
         x + PADDLE_WIDTH / 2,
-        y + PADDLE_HEIGHT / 2,
+        y2,
         fill='white',
     )
 
+
 def draw_ball(state):
+    "Draws the ball itself."
     x, y = state.ball_pos
     gamelib.draw_oval(
         x - BALL_RADIUS,
@@ -88,12 +99,16 @@ def draw_ball(state):
         fill='white',
     )
 
+
 def random_ball_velocity():
+    "Generate a random velocity for the ball to take."
     vx, vy = 1 if random.random() > 0.5 else -1, random.random()
     norm = (vx * vx + vy * vy) ** 0.5
     return vx / norm, vy / norm
 
+
 def check_goal(state):
+    "Checks collision againts the boundaires behind the paddles."
     W, H = SIZE
     x, y = state.ball_pos
     vx, vy = state.ball_vel
@@ -113,7 +128,9 @@ def check_goal(state):
         )
     return state
 
+
 def draw_score(state):
+    "Updates the score."
     W, H = SIZE
     score1, score2 = state.score
     gamelib.draw_text(f"{score1} - {score2}", W / 2, 10, anchor='n', fill='white')
@@ -123,16 +140,16 @@ def main():
     gamelib.title("Pong")
 
     W, H = SIZE
+    MID_H = H / 2
     gamelib.resize(W, H)
 
     state = State(
-        paddles=(H / 2, H / 2),
+        paddles=((MID_H - PADDLE_HEIGHT / 2, MID_H + PADDLE_HEIGHT / 2),
+                 (MID_H - PADDLE_HEIGHT / 2, MID_H + PADDLE_HEIGHT / 2)),
         ball_pos=(W / 2, H / 2),
         ball_vel=random_ball_velocity(),
         score=(0, 0),
     )
-
-    key_pressed = {}
 
     while gamelib.loop():
         gamelib.draw_begin()
@@ -142,16 +159,10 @@ def main():
         draw_score(state)
         gamelib.draw_end()
 
-        for event in gamelib.get_events():
-            if event.type == gamelib.EventType.KeyPress:
-                key_pressed[event.key] = True
-            if event.type == gamelib.EventType.KeyRelease:
-                key_pressed[event.key] = False
-
-        if key_pressed.get('q', False):    state = move_paddle(state, PADDLE1, -1)
-        if key_pressed.get('a', False):    state = move_paddle(state, PADDLE1, +1)
-        if key_pressed.get('Up', False):   state = move_paddle(state, PADDLE2, -1)
-        if key_pressed.get('Down', False): state = move_paddle(state, PADDLE2, +1)
+        if gamelib.key_pressed('q'):    state = move_paddle(state, PADDLE1, -1)
+        if gamelib.key_pressed('a'):    state = move_paddle(state, PADDLE1, +1)
+        if gamelib.key_pressed('Up'):   state = move_paddle(state, PADDLE2, -1)
+        if gamelib.key_pressed('Down'): state = move_paddle(state, PADDLE2, +1)
 
         state = move_ball(state)
         state = check_goal(state)

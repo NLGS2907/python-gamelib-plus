@@ -8,25 +8,29 @@ the simplicity and portability of the original project.
 https://github.com/NLGS2907/python-gamelib-plus
 """
 
-from os import _exit as os_exit, getcwd
-from os.path import abspath, splitext
 import signal
-from sys import excepthook, exc_info
-from threading import Thread, Event as ThreadEvent
-from time import time, sleep
 import tkinter as tk
 from enum import Enum
 from logging import INFO, Formatter, Logger, StreamHandler, getLogger
+from os import _exit as os_exit
+from os import getcwd
+from os.path import abspath, splitext
 from queue import Empty, Queue
+from sys import exc_info, excepthook
+from threading import Event as ThreadEvent
+from threading import Thread
+from time import sleep, time
 from tkinter import Button, messagebox, simpledialog
 from tkinter.font import Font
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypeAlias, Union
 
+KeysDict: TypeAlias = Dict[str, bool]
 
 __all__ = ["wait", "get_events", "title", "icon", "draw_begin", "draw_image",
            "draw_text", "draw_arc", "draw_line", "draw_oval", "draw_polygon",
            "draw_rectangle", "draw_button", "draw_end", "resize", "say", "input",
-           "is_alive", "loop", "play_sound", "MessageType", "EventType", "Event"]
+           "is_alive", "loop", "play_sound", "key_pressed", "MessageType",
+           "EventType", "Event"]
 
 
 class MessageType(Enum):
@@ -80,7 +84,7 @@ class Event:
     Attributes:
         type: An `EventType`.
         key: A key that has been pressed/released.
-        mouse_button: 1, 2 or 3 for left, right and middle mouse buttons respectively.
+        mouse_button: 1, 2 or 3 for left, middle and right mouse buttons respectively.
                       Also supports 4 and 5 for when the mouse wheel is scrolled up or down.
         x: The current mouse horizontal position, in pixels.
         y: The current mouse vertical position, in pixels.
@@ -211,6 +215,8 @@ class _TkWindow(tk.Tk):
         self.assets: Dict[str, Union[Font, tk.PhotoImage]] = {}
         self.buttons: Dict[Tuple[int, int], Button] = {}
 
+        self.keys_pressed: KeysDict = {}
+
         self.canvas: tk.Canvas = tk.Canvas(background="black")
         self.canvas.grid(column=0, row=0, sticky="nwes")
 
@@ -262,6 +268,11 @@ class _TkWindow(tk.Tk):
         if any(isinstance(tkevent.widget, class_check) for class_check in [Button]):
             tkevent.x = tkevent.x_root - self.canvas.winfo_rootx()
             tkevent.y = tkevent.y_root - self.canvas.winfo_rooty()
+
+        if tkevent.type.name == "KeyPress":
+            self.keys_pressed[tkevent.keysym] = True
+        elif tkevent.type.name == "KeyRelease":
+            self.keys_pressed[tkevent.keysym] = False
 
         _GameThread.events.put(Event(tkevent))
 
@@ -363,6 +374,12 @@ class _TkWindow(tk.Tk):
         "Prompts a box able to take user input."
 
         response.put(simpledialog.askstring(self.title(), prompt, parent=self))
+
+
+    def get_key_pressed(self, key: str, response: Queue) -> None:
+        "Returns if a key is pressed."
+
+        response.put(self.keys_pressed.get(key, False))
 
 
 def check_image_format(path: str) -> None:
@@ -500,19 +517,9 @@ def _audio_init() -> Callable[[str], None]:
 class _GameThread(Thread):
     "The game thread to be used."
 
-    _instance: "_GameThread"
-    initialized: ThreadEvent
-    events: Queue
-
-
-    def __new__(cls) -> "_GameThread":
-        "Returns the unique instance of `_GameThread`"
-
-        if not hasattr(cls, "_instance"):
-            cls._instance = super().__new__(cls)
-            cls.initialized= ThreadEvent()
-            cls.events = Queue()
-        return cls._instance
+    instance: Optional["_GameThread"] = None
+    initialized: ThreadEvent = ThreadEvent()
+    events: Queue = Queue()
 
 
     def start(self, game_main: Callable[..., None], args) -> None:
@@ -885,6 +892,23 @@ class _GameThread(Thread):
         return response.get()
 
 
+    def get_key_pressed(self, key: str) -> bool:
+        """
+        Determines if a given key is currently being pressed.
+
+        Example:
+            ```
+            while gamelib.is_alive():
+                if key_pressed('a'):
+                    gamelib.say(f'You pressed the key a')
+            ```
+        """
+
+        response = Queue()
+        self.send_command_to_tk('get_key_pressed', key, response, notify=True)
+        return response.get()
+
+
     def is_alive(self) -> bool:
         """
         Returns `True` if the game window is open, or `False` otherwise.
@@ -929,27 +953,30 @@ class _GameThread(Thread):
         return self.is_alive()
 
 
+_GameThread.instance = _GameThread()
+
 # Module Aliases
-wait = _GameThread().wait
-get_events = _GameThread().get_events
-title = _GameThread().title
-icon = _GameThread().icon
-draw_begin = _GameThread().draw_begin
-draw_image = _GameThread().draw_image
-draw_text = _GameThread().draw_text
-draw_arc = _GameThread().draw_arc
-draw_line = _GameThread().draw_line
-draw_oval = _GameThread().draw_oval
-draw_polygon = _GameThread().draw_polygon
-draw_rectangle = _GameThread().draw_rectangle
-draw_button = _GameThread().draw_button
-draw_end = _GameThread().draw_end
-resize = _GameThread().resize
-say = _GameThread().say
-input = _GameThread().input
-is_alive = _GameThread().is_alive
-loop = _GameThread().loop
+wait = _GameThread.instance.wait
+get_events = _GameThread.instance.get_events
+title = _GameThread.instance.title
+icon = _GameThread.instance.icon
+draw_begin = _GameThread.instance.draw_begin
+draw_image = _GameThread.instance.draw_image
+draw_text = _GameThread.instance.draw_text
+draw_arc = _GameThread.instance.draw_arc
+draw_line = _GameThread.instance.draw_line
+draw_oval = _GameThread.instance.draw_oval
+draw_polygon = _GameThread.instance.draw_polygon
+draw_rectangle = _GameThread.instance.draw_rectangle
+draw_button = _GameThread.instance.draw_button
+draw_end = _GameThread.instance.draw_end
+resize = _GameThread.instance.resize
+say = _GameThread.instance.say
+input = _GameThread.instance.input
+is_alive = _GameThread.instance.is_alive
+loop = _GameThread.instance.loop
 play_sound = _audio_init()
+key_pressed = _GameThread.instance.get_key_pressed
 
 
 def _sigint_handler(sig, frame) -> None:
@@ -969,7 +996,7 @@ def init(game_main: Callable[..., None], args=None) -> None:
         args: List of arguments to be passed to the `main` function, or `None`.
     """
 
-    _GameThread().start(game_main, args or [])
+    _GameThread.instance.start(game_main, args or [])
 
     # block until wait(), get_events(), etc called on game thread.
     # This prevents rendering the window before the user has a chance to configure it.
@@ -985,8 +1012,8 @@ def init(game_main: Callable[..., None], args=None) -> None:
     finally:
         _GameThread.events.put(None)
         _TkWindow.instance = None
-        _GameThread._instance.join(1)
-        if _GameThread().is_alive():
+        _GameThread.instance.join(1)
+        if _GameThread.instance.is_alive():
             log.info('Killing unresponsive game thread. Make sure to call get_events() or wait() periodically.')
             os_exit(1)
         os_exit(0)
