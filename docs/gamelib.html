@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>gamelib API documentation</title>
+<meta name="description" content="Gamelib+ is an experimental fork of the [gamelib](https://github.com/dessaya/python-gamelib)
+library, which is slightly more feature-rich and with …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/atom-one-dark.min.css" crossorigin>
+<style>
+:root {
+--highlight-color: #202;
+}
+html {
+scrollbar-face-color: #646464;
+scrollbar-base-color: #646464;
+scrollbar-3dlight-color: #646464;
+scrollbar-highlight-color: #646464;
+scrollbar-track-color: #000;
+scrollbar-arrow-color: #000;
+scrollbar-shadow-color: #646464;
+scrollbar-dark-shadow-color: #646464;
+}
+::-webkit-scrollbar { width: 10px; height: 8px;}
+::-webkit-scrollbar-button {
+background-color: #2b2a2a;
+height: 8px;}
+::-webkit-scrollbar-track {
+background-color: #646464; border-radius: 7px}
+::-webkit-scrollbar-track-piece { background-color: #424242; border-radius: 7px}
+::-webkit-scrollbar-thumb { height: 50px; background-color: #666; border-radius: 7px;}
+::-webkit-scrollbar-corner { background-color: #646464;}
+::-webkit-resizer { background-color: #666;}
+.flex {
+display: flex !important;
+}
+body {
+line-height: 1.5em;
+color: #fff;
+background-color: #2b2a2a;
+}
+#content {
+padding: 20px;
+}
+#sidebar {
+padding: 30px;
+overflow: hidden;
+}
+#sidebar>*:last-child {
+margin-bottom: 2cm;
+}
+.http-server-breadcrumbs {
+font-size: 130%;
+margin: 0 0 15px 0;
+}
+#footer {
+font-size: .75em;
+padding: 5px 30px;
+border-top: 1px solid #fff;
+text-align: right;
+}
+#footer p {
+margin: 0 0 0 1em;
+display: inline-block;
+}
+#footer p:last-child {
+margin-right: 30px;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+font-weight: 300;
+color: #fff;
+}
+h1 {
+font-size: 2.5em;
+line-height: 1.1em;
+}
+h2 {
+font-size: 1.75em;
+margin: 1em 0 .50em 0;
+}
+h3 {
+font-size: 1.4em;
+margin: 25px 0 10px 0;
+}
+h4 {
+margin: 0;
+font-size: 105%;
+}
+h1:target,
+h2:target,
+h3:target,
+h4:target,
+h5:target,
+h6:target {
+background: #000;
+padding: 0.2em 0;
+}
+a {
+color: #eb6085;
+text-decoration: none;
+transition: color .3s ease-in-out;
+}
+a:hover {
+color: #ffb30f;
+}
+.title code {
+font-weight: bold;
+}
+h2[id^="header-"] {
+margin-top: 2em;
+}
+.ident {
+color: #1097e6;
+}
+pre code {
+background: transparent;
+font-size: .8em;
+line-height: 1.4em;
+}
+code {
+background: rgba(255, 255, 255, 0.1);
+padding: 1px 4px;
+overflow-wrap: break-word;
+}
+h1 code {
+background: transparent
+}
+pre {
+background: transparent;
+border: 0;
+border-top: 1px solid #ccc;
+border-bottom: 1px solid #ccc;
+margin: 1em 0;
+padding: 1ex;
+}
+#http-server-module-list {
+display: flex;
+flex-flow: column;
+}
+#http-server-module-list div {
+display: flex;
+}
+#http-server-module-list dt {
+min-width: 10%;
+}
+#http-server-module-list p {
+margin-top: 0;
+}
+.toc ul,
+#index {
+list-style-type: none;
+margin: 0;
+padding: 0;
+}
+#index code {
+background: transparent;
+}
+#index h3 {
+border-bottom: 1px solid #ddd;
+}
+#index ul {
+padding: 0;
+}
+#index h4 {
+margin-top: .6em;
+font-weight: bold;
+}
+/* Make TOC lists have 2+ columns when viewport is wide enough.
+Assuming ~20-character identifiers and ~30% wide sidebar. */
+@media (min-width: 200ex) {
+#index .two-column {
+column-count: 2
+}
+}
+@media (min-width: 300ex) {
+#index .two-column {
+column-count: 3
+}
+}
+dl {
+margin-bottom: 2em;
+}
+dl dl:last-child {
+margin-bottom: 4em;
+}
+dd {
+margin: 0 0 1em 3em;
+}
+#header-classes+dl>dd {
+margin-bottom: 3em;
+}
+dd dd {
+margin-left: 2em;
+}
+dd p {
+margin: 10px 0;
+}
+.name {
+background: #424242;
+font-weight: bold;
+font-size: .85em;
+padding: 5px 10px;
+display: inline-block;
+min-width: 40%;
+}
+.name:hover {
+background: #535353;
+}
+dt:target .name {
+background: var(--highlight-color);
+}
+.name>span:first-child {
+white-space: nowrap;
+}
+.name.class>span:nth-child(2) {
+margin-left: .4em;
+}
+.inherited {
+color: #999;
+border-left: 5px solid #eee;
+padding-left: 1em;
+}
+.inheritance em {
+font-style: normal;
+font-weight: bold;
+}
+.pydefname {
+color: #f90;
+}
+/* Docstrings titles, e.g. in numpydoc format */
+.desc h2 {
+font-weight: 400;
+font-size: 1.25em;
+}
+.desc h3 {
+font-size: 1em;
+}
+.desc dt code {
+background: inherit;
+/* Don't grey-back parameters */
+}
+.source summary,
+.git-link-div {
+color: #666;
+text-align: right;
+font-weight: 400;
+font-size: .8em;
+text-transform: uppercase;
+}
+.source summary>* {
+white-space: nowrap;
+cursor: pointer;
+}
+.git-link {
+color: inherit;
+margin-left: 1em;
+}
+.source pre {
+max-height: 500px;
+overflow: auto;
+margin: 0;
+}
+.source pre code {
+font-size: 12px;
+overflow: visible;
+}
+.hlist {
+list-style: none;
+}
+.hlist li {
+display: inline;
+}
+.hlist li:after {
+content: ',\2002';
+}
+.hlist li:last-child:after {
+content: none;
+}
+.hlist .hlist {
+display: inline;
+padding-left: 1em;
+}
+img {
+max-width: 100%;
+}
+td {
+padding: 0 .5em;
+}
+.admonition {
+padding: .1em .5em;
+margin-bottom: 1em;
+}
+.admonition-title {
+font-weight: bold;
+}
+.admonition.note,
+.admonition.info,
+.admonition.important {
+background: #00a;
+}
+.admonition.todo,
+.admonition.versionadded,
+.admonition.tip,
+.admonition.hint {
+background: #050;
+}
+.admonition.warning,
+.admonition.versionchanged,
+.admonition.deprecated {
+background: #ec0;
+}
+.admonition.error,
+.admonition.danger,
+.admonition.caution {
+background: #c20010;
+}
+p {
+color: #fff;
+}
+</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>gamelib</code></h1>
+</header>
+<section id="section-intro">
+<p>Gamelib+ is an experimental fork of the <a href="https://github.com/dessaya/python-gamelib">gamelib</a>
+library, which is slightly more feature-rich and with type-hinted source code, but maintaining
+the simplicity and portability of the original project.</p>
+<p><u><em>Any</em> project built with gamelib should work with gamelib+ too!</u></p>
+<p><a href="https://github.com/NLGS2907/python-gamelib-plus">https://github.com/NLGS2907/python-gamelib-plus</a></p>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="gamelib.draw_arc"><code class="name flex">
+<span>def <span class="ident">draw_arc</span></span>(<span>x1, y1, x2, y2, **options)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draw an arc, pieslice, or chord in the bounding box between points <code>x1, y1</code> and
+<code>x2, y2</code>.</p>
+<p>To see all supported options, see the documentation for
+<a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/create_arc.html"><code>tkinter.Canvas.create_arc</code></a>.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.draw_arc(10, 10, 20, 20, outline='white', fill='red')
+</code></pre></div>
+</dd>
+<dt id="gamelib.draw_begin"><code class="name flex">
+<span>def <span class="ident">draw_begin</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Clear the window.</p>
+<p>Any call to <code>draw_*</code> should be between <code><a title="gamelib.draw_begin" href="#gamelib.draw_begin">_GameThread.draw_begin()</a></code> and <code><a title="gamelib.draw_end" href="#gamelib.draw_end">_GameThread.draw_end()</a></code>.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.draw_begin()
+gamelib.draw_rectangle(0, 0, 10, 10, fill='red')
+gamelib.draw_end()
+</code></pre></div>
+</dd>
+<dt id="gamelib.draw_button"><code class="name flex">
+<span>def <span class="ident">draw_button</span></span>(<span>x, y, **options)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draws a button at the coordinates <code>x, y</code>.</p>
+<p>Some of the supported options are:</p>
+<ul>
+<li><code>text</code>: The text to display on this button.</li>
+<li><code>background</code> or <code>bg</code>: Button Background fill color.</li>
+<li><code>foreground</code> or <code>fg</code>: Button Text fill color.</li>
+<li><code>command</code>: The handler function to be used as a callback for this button.</li>
+</ul>
+<p>To see all supported options, see the documentation for
+<a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/button.html"><code>tkinter.Button</code></a></p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.draw_button(20, 20, text='say hello', background='black', foreground='white', command=(lambda : print('hello!')))
+</code></pre></div>
+</dd>
+<dt id="gamelib.draw_end"><code class="name flex">
+<span>def <span class="ident">draw_end</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Refresh the window.</p>
+<p>Any call to <code>draw_*</code> should be between <code><a title="gamelib.draw_begin" href="#gamelib.draw_begin">_GameThread.draw_begin()</a></code> and <code><a title="gamelib.draw_end" href="#gamelib.draw_end">_GameThread.draw_end()</a></code>.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.draw_begin()
+gamelib.draw_rectangle(0, 0, 10, 10, fill='red')
+gamelib.draw_end()
+</code></pre></div>
+</dd>
+<dt id="gamelib.draw_image"><code class="name flex">
+<span>def <span class="ident">draw_image</span></span>(<span>path, x, y)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draw an image located at <code>path</code> in the coordinates <code>x, y</code>.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.draw_image('images/player.gif', 10, 10)
+</code></pre>
+<h2 id="note">Note</h2>
+<p>The only image formats that are supported accross all platforms (Windows/Mac/Linux)
+are GIF and PPM/PGM/PBM.</p></div>
+</dd>
+<dt id="gamelib.draw_line"><code class="name flex">
+<span>def <span class="ident">draw_line</span></span>(<span>x1, y1, x2, y2, **options)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draw a straight line between points <code>x1, y1</code> and <code>x2, y2</code>.</p>
+<p>To see all supported options, see the documentation for
+<a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/create_line.html"><code>tkinter.Canvas.create_line</code></a>.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.draw_line(10, 10, 30, 20, fill='blue', width=2)
+</code></pre></div>
+</dd>
+<dt id="gamelib.draw_oval"><code class="name flex">
+<span>def <span class="ident">draw_oval</span></span>(<span>x1, y1, x2, y2, **options)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draw an ellipse in the bounding box between points <code>x1, y1</code> and <code>x2, y2</code>.</p>
+<p>To see all supported options, see the documentation for
+<a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/create_oval.html"><code>tkinter.Canvas.create_oval</code></a>.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.draw_oval(10, 10, 30, 20, outline='white', fill='red')
+</code></pre></div>
+</dd>
+<dt id="gamelib.draw_polygon"><code class="name flex">
+<span>def <span class="ident">draw_polygon</span></span>(<span>points, **options)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draw a polygon with vertices in the given <code>points</code> coordinates list. The list must have
+an even amount of numbers; each pair determines a vertex. The last vertex is automatically
+joined with the first one with a segment.</p>
+<p>To see all supported options, see the documentation for
+<a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/create_polygon.html"><code>tkinter.Canvas.create_polygon</code></a>.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.draw_polygon([10, 10, 30, 20, 0, 40], outline='white', fill='red')
+</code></pre></div>
+</dd>
+<dt id="gamelib.draw_rectangle"><code class="name flex">
+<span>def <span class="ident">draw_rectangle</span></span>(<span>x1, y1, x2, y2, **options)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draw an rectangle in the bounding box between points <code>x1, y1</code> and <code>x2, y2</code>.</p>
+<p>To see all supported options, see the documentation for
+<a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/create_rectangle.html"><code>tkinter.Canvas.create_rectangle</code></a>.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.draw_rectangle(10, 10, 30, 20, outline='white', fill='red')
+</code></pre></div>
+</dd>
+<dt id="gamelib.draw_text"><code class="name flex">
+<span>def <span class="ident">draw_text</span></span>(<span>text, x, y, font=None, size=12, bold=False, italic=False, **options)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Draw some <code>text</code> at coordinates <code>x, y</code> with the given properties.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>text</code></strong></dt>
+<dd>The text to draw.</dd>
+<dt><strong><code>x</code></strong></dt>
+<dd>The screen coordinates for the text.</dd>
+<dt><strong><code>y</code></strong></dt>
+<dd>The screen coordinates for the text.</dd>
+<dt><strong><code>font</code></strong></dt>
+<dd>Font family name (eg: <code>'Helvetica'</code>). <strong>Note:</strong> the only font guaranteed to be
+available in all systems is the default font. If the selected font is not found,
+the default font will be used instead.</dd>
+<dt><strong><code>size</code></strong></dt>
+<dd>Size of the text.</dd>
+<dt><strong><code>bold</code></strong></dt>
+<dd>Whether or not to use bold weight.</dd>
+<dt><strong><code>italic</code></strong></dt>
+<dd>Whether or not to use italic slant.</dd>
+</dl>
+<p>Some of the supported extra options are:</p>
+<ul>
+<li><code>fill</code>: Fill color. It can be named colors like <code>'red'</code>, <code>'white'</code>, etc,
+or a specific color in <code>'#rrggbb'</code> hexadecimal format.</li>
+<li><code>anchor</code>: Where to place the text relative to the given position.
+It may be any combination of <code>n</code> (North), <code>s</code> (South), <code>e</code>
+(East), <code>w</code> (West) and <code>c</code> (center). Default is <code>c</code>.</li>
+</ul>
+<p>To see all supported options, see the documentation for
+<a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/create_text.html"><code>tkinter.Canvas.create_text</code></a>.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.draw_text('Hello world!', 10, 10, fill='red', anchor='nw')
+</code></pre></div>
+</dd>
+<dt id="gamelib.get_events"><code class="name flex">
+<span>def <span class="ident">get_events</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the list of <code><a title="gamelib.Event" href="#gamelib.Event">Event</a></code>s that happened since the last call to <code><a title="gamelib.get_events" href="#gamelib.get_events">_GameThread.get_events()</a></code>.</p>
+<p>This function is normally used in combination with <code><a title="gamelib.loop" href="#gamelib.loop">_GameThread.loop()</a></code>, in action games.</p>
+<h2 id="example">Example</h2>
+<pre><code>while gamelib.loop(fps=30):
+    # this is executed 30 times per second
+    for event in gamelib.get_events():
+        if event.type == gamelib.EventType.KeyPress and event.key == 'q':
+            return
+</code></pre></div>
+</dd>
+<dt id="gamelib.icon"><code class="name flex">
+<span>def <span class="ident">icon</span></span>(<span>path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set the window icon to the image located at <code>path</code>.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.icon('images/icon.gif')
+</code></pre>
+<h2 id="note">Note</h2>
+<p>The only image formats that are supported accross all platforms (Windows/Mac/Linux)
+are GIF and PPM/PGM/PBM.</p></div>
+</dd>
+<dt id="gamelib.input"><code class="name flex">
+<span>def <span class="ident">input</span></span>(<span>prompt)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Ask the user to enter a text value.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>prompt</code></strong></dt>
+<dd>A message to display.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>A string containing the value that the user typed. <code>None</code> if the user
+clicked on Cancel instead of OK.</p></div>
+</dd>
+<dt id="gamelib.is_alive"><code class="name flex">
+<span>def <span class="ident">is_alive</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns <code>True</code> if the game window is open, or <code>False</code> otherwise.</p>
+<h2 id="example">Example</h2>
+<pre><code>while gamelib.is_alive():
+    event = gamelib.wait(gamelib.EventType.KeyPress):
+    gamelib.say(f'You pressed {event.key}')
+</code></pre></div>
+</dd>
+<dt id="gamelib.key_pressed"><code class="name flex">
+<span>def <span class="ident">key_pressed</span></span>(<span>key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Determines if a given key is currently being pressed.</p>
+<h2 id="example">Example</h2>
+<pre><code>while gamelib.is_alive():
+    if key_pressed('a'):
+        gamelib.say(f'You pressed the key a')
+</code></pre></div>
+</dd>
+<dt id="gamelib.loop"><code class="name flex">
+<span>def <span class="ident">loop</span></span>(<span>fps=30)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>When used in a <code>while</code> loop, the body will be executed <code>fps</code> times per second.</p>
+<h2 id="returns">Returns</h2>
+<p><code>True</code> if the game window is still open, <code>False</code> otherwise.</p>
+<h2 id="example">Example</h2>
+<pre><code>while gamelib.loop(fps=30):
+    # this is executed 30 times per second
+    for event in gamelib.get_events():
+        if event.type == gamelib.EventType.KeyPress and event.key == 'q':
+            return
+</code></pre></div>
+</dd>
+<dt id="gamelib.play_sound"><code class="name flex">
+<span>def <span class="ident">play_sound</span></span>(<span>sound)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Play a sound located at the given path.</p>
+<h2 id="example">Example</h2>
+<pre><code>gamelib.play_sound('sound/jump.wav')
+</code></pre>
+<h2 id="note">Note</h2>
+<p>The only sound format that is supported accross all platforms (Windows/Mac/Linux)
+is WAV.</p></div>
+</dd>
+<dt id="gamelib.resize"><code class="name flex">
+<span>def <span class="ident">resize</span></span>(<span>width, height)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Resize the window to be <code>width</code> pixels wide and <code>height</code> pixels tall.</p></div>
+</dd>
+<dt id="gamelib.say"><code class="name flex">
+<span>def <span class="ident">say</span></span>(<span>message, msg_type='info')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Present the user with the given <code>message</code> in a dialog box, depending on the type.
+Available types are <code>info</code>, <code>warning</code>, <code>error</code>, <code>question</code>, <code>okcancel</code>, <code>yesno</code>,
+<code>yesnocancel</code> or <code>retry</code>.
+The default is <code>info</code>.</p></div>
+</dd>
+<dt id="gamelib.title"><code class="name flex">
+<span>def <span class="ident">title</span></span>(<span>s)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Set the window title to <code>s</code>.</p></div>
+</dd>
+<dt id="gamelib.wait"><code class="name flex">
+<span>def <span class="ident">wait</span></span>(<span>event_types=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Wait until the next <code><a title="gamelib.Event" href="#gamelib.Event">Event</a></code>: a key is pressed/released, the mouse is moved, etc,
+and return it.</p>
+<p>This function is normally used in combination with <code><a title="gamelib.is_alive" href="#gamelib.is_alive">_GameThread.is_alive()</a></code>,
+in turn-based games.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>event_type</code></strong></dt>
+<dd>If an <code><a title="gamelib.EventType" href="#gamelib.EventType">EventType</a></code> is passed, the function will ignore any
+events that are not of this type. (It will still return <code>None</code>
+when the game is closed).
+It also accepts a tuple of event types, so it can listen to
+more than one type.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>An <code><a title="gamelib.Event" href="#gamelib.Event">Event</a></code>, or <code>None</code> if the user closed the game window.</p>
+<h2 id="example">Example</h2>
+<pre><code>while gamelib.is_alive():
+    event = gamelib.wait(gamelib.EventType.KeyPress):
+    gamelib.say(f'You pressed {event.key}')
+</code></pre></div>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="gamelib.Event"><code class="flex name class">
+<span>class <span class="ident">Event</span></span>
+<span>(</span><span>tkevent)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents an event generated by the user.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>type</code></strong></dt>
+<dd>An <code><a title="gamelib.EventType" href="#gamelib.EventType">EventType</a></code>.</dd>
+<dt><strong><code>key</code></strong></dt>
+<dd>A key that has been pressed/released.</dd>
+<dt><strong><code>mouse_button</code></strong></dt>
+<dd>1, 2 or 3 for left, middle and right mouse buttons respectively.
+Also supports 4 and 5 for when the mouse wheel is scrolled up or down.</dd>
+<dt><strong><code>x</code></strong></dt>
+<dd>The current mouse horizontal position, in pixels.</dd>
+<dt><strong><code>y</code></strong></dt>
+<dd>The current mouse vertical position, in pixels.</dd>
+</dl>
+<p>This is actually a wrapper for the
+<a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/event-handlers.html">Tkinter Event class</a>.
+Any of the <code>tk.Event</code> attributes can be accessed through this object.</p>
+<h2 id="see-also">See also</h2>
+<p><code><a title="gamelib.wait" href="#gamelib.wait">_GameThread.wait()</a></code>, <code><a title="gamelib.get_events" href="#gamelib.get_events">_GameThread.get_events()</a></code></p></div>
+</dd>
+<dt id="gamelib.EventType"><code class="flex name class">
+<span>class <span class="ident">EventType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration of the different types of <code><a title="gamelib.Event" href="#gamelib.Event">Event</a></code>s supported by gamelib.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="gamelib.EventType.ButtonPress"><code class="name">var <span class="ident">ButtonPress</span></code></dt>
+<dd>
+<div class="desc"><p>The user pressed a mouse button.</p></div>
+</dd>
+<dt id="gamelib.EventType.ButtonRelease"><code class="name">var <span class="ident">ButtonRelease</span></code></dt>
+<dd>
+<div class="desc"><p>The user released a mouse button.</p></div>
+</dd>
+<dt id="gamelib.EventType.KeyPress"><code class="name">var <span class="ident">KeyPress</span></code></dt>
+<dd>
+<div class="desc"><p>The user pressed a key.</p></div>
+</dd>
+<dt id="gamelib.EventType.KeyRelease"><code class="name">var <span class="ident">KeyRelease</span></code></dt>
+<dd>
+<div class="desc"><p>The user released a key.</p></div>
+</dd>
+<dt id="gamelib.EventType.Motion"><code class="name">var <span class="ident">Motion</span></code></dt>
+<dd>
+<div class="desc"><p>The user moved the mouse over the window.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="gamelib.MessageType"><code class="flex name class">
+<span>class <span class="ident">MessageType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration of the different types of message boxes supported by <code><a title="gamelib.say" href="#gamelib.say">_GameThread.say()</a></code>.</p></div>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="gamelib.MessageType.ERROR"><code class="name">var <span class="ident">ERROR</span></code></dt>
+<dd>
+<div class="desc"><p>Error message.</p></div>
+</dd>
+<dt id="gamelib.MessageType.INFO"><code class="name">var <span class="ident">INFO</span></code></dt>
+<dd>
+<div class="desc"><p>Information message.</p></div>
+</dd>
+<dt id="gamelib.MessageType.OKCANCEL"><code class="name">var <span class="ident">OKCANCEL</span></code></dt>
+<dd>
+<div class="desc"><p>Confirmation message.</p></div>
+</dd>
+<dt id="gamelib.MessageType.QUESTION"><code class="name">var <span class="ident">QUESTION</span></code></dt>
+<dd>
+<div class="desc"><p>Question message.</p></div>
+</dd>
+<dt id="gamelib.MessageType.RETRY"><code class="name">var <span class="ident">RETRY</span></code></dt>
+<dd>
+<div class="desc"><p>Retry message.</p></div>
+</dd>
+<dt id="gamelib.MessageType.WARNING"><code class="name">var <span class="ident">WARNING</span></code></dt>
+<dd>
+<div class="desc"><p>Warning message.</p></div>
+</dd>
+<dt id="gamelib.MessageType.YESNO"><code class="name">var <span class="ident">YESNO</span></code></dt>
+<dd>
+<div class="desc"><p>Yes or No question message.</p></div>
+</dd>
+<dt id="gamelib.MessageType.YESNOCANCEL"><code class="name">var <span class="ident">YESNOCANCEL</span></code></dt>
+<dd>
+<div class="desc"><p>Yes or No question with cancel option message.</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="gamelib.draw_arc" href="#gamelib.draw_arc">draw_arc</a></code></li>
+<li><code><a title="gamelib.draw_begin" href="#gamelib.draw_begin">draw_begin</a></code></li>
+<li><code><a title="gamelib.draw_button" href="#gamelib.draw_button">draw_button</a></code></li>
+<li><code><a title="gamelib.draw_end" href="#gamelib.draw_end">draw_end</a></code></li>
+<li><code><a title="gamelib.draw_image" href="#gamelib.draw_image">draw_image</a></code></li>
+<li><code><a title="gamelib.draw_line" href="#gamelib.draw_line">draw_line</a></code></li>
+<li><code><a title="gamelib.draw_oval" href="#gamelib.draw_oval">draw_oval</a></code></li>
+<li><code><a title="gamelib.draw_polygon" href="#gamelib.draw_polygon">draw_polygon</a></code></li>
+<li><code><a title="gamelib.draw_rectangle" href="#gamelib.draw_rectangle">draw_rectangle</a></code></li>
+<li><code><a title="gamelib.draw_text" href="#gamelib.draw_text">draw_text</a></code></li>
+<li><code><a title="gamelib.get_events" href="#gamelib.get_events">get_events</a></code></li>
+<li><code><a title="gamelib.icon" href="#gamelib.icon">icon</a></code></li>
+<li><code><a title="gamelib.input" href="#gamelib.input">input</a></code></li>
+<li><code><a title="gamelib.is_alive" href="#gamelib.is_alive">is_alive</a></code></li>
+<li><code><a title="gamelib.key_pressed" href="#gamelib.key_pressed">key_pressed</a></code></li>
+<li><code><a title="gamelib.loop" href="#gamelib.loop">loop</a></code></li>
+<li><code><a title="gamelib.play_sound" href="#gamelib.play_sound">play_sound</a></code></li>
+<li><code><a title="gamelib.resize" href="#gamelib.resize">resize</a></code></li>
+<li><code><a title="gamelib.say" href="#gamelib.say">say</a></code></li>
+<li><code><a title="gamelib.title" href="#gamelib.title">title</a></code></li>
+<li><code><a title="gamelib.wait" href="#gamelib.wait">wait</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="gamelib.Event" href="#gamelib.Event">Event</a></code></h4>
+</li>
+<li>
+<h4><code><a title="gamelib.EventType" href="#gamelib.EventType">EventType</a></code></h4>
+<ul class="">
+<li><code><a title="gamelib.EventType.ButtonPress" href="#gamelib.EventType.ButtonPress">ButtonPress</a></code></li>
+<li><code><a title="gamelib.EventType.ButtonRelease" href="#gamelib.EventType.ButtonRelease">ButtonRelease</a></code></li>
+<li><code><a title="gamelib.EventType.KeyPress" href="#gamelib.EventType.KeyPress">KeyPress</a></code></li>
+<li><code><a title="gamelib.EventType.KeyRelease" href="#gamelib.EventType.KeyRelease">KeyRelease</a></code></li>
+<li><code><a title="gamelib.EventType.Motion" href="#gamelib.EventType.Motion">Motion</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="gamelib.MessageType" href="#gamelib.MessageType">MessageType</a></code></h4>
+<ul class="two-column">
+<li><code><a title="gamelib.MessageType.ERROR" href="#gamelib.MessageType.ERROR">ERROR</a></code></li>
+<li><code><a title="gamelib.MessageType.INFO" href="#gamelib.MessageType.INFO">INFO</a></code></li>
+<li><code><a title="gamelib.MessageType.OKCANCEL" href="#gamelib.MessageType.OKCANCEL">OKCANCEL</a></code></li>
+<li><code><a title="gamelib.MessageType.QUESTION" href="#gamelib.MessageType.QUESTION">QUESTION</a></code></li>
+<li><code><a title="gamelib.MessageType.RETRY" href="#gamelib.MessageType.RETRY">RETRY</a></code></li>
+<li><code><a title="gamelib.MessageType.WARNING" href="#gamelib.MessageType.WARNING">WARNING</a></code></li>
+<li><code><a title="gamelib.MessageType.YESNO" href="#gamelib.MessageType.YESNO">YESNO</a></code></li>
+<li><code><a title="gamelib.MessageType.YESNOCANCEL" href="#gamelib.MessageType.YESNOCANCEL">YESNOCANCEL</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
