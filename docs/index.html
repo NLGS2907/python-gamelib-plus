@@ -367,7 +367,7 @@ the simplicity and portability of the original project.</p>
 </code></dt>
 <dd>
 <div class="desc"><p>Clear the window.</p>
-<p>Any call to <code>draw_*</code> should be between <code><a title="gamelib.draw_begin" href="#gamelib.draw_begin">_GameThread.draw_begin()</a></code> and <code><a title="gamelib.draw_end" href="#gamelib.draw_end">_GameThread.draw_end()</a></code>.</p>
+<p>Any call to <code>draw_*</code> should be between <code><a title="gamelib.draw_begin" href="#gamelib.draw_begin">draw_begin()</a></code> and <code><a title="gamelib.draw_end" href="#gamelib.draw_end">draw_end()</a></code>.</p>
 <h2 id="example">Example</h2>
 <pre><code>gamelib.draw_begin()
 gamelib.draw_rectangle(0, 0, 10, 10, fill='red')
@@ -397,7 +397,7 @@ gamelib.draw_end()
 </code></dt>
 <dd>
 <div class="desc"><p>Refresh the window.</p>
-<p>Any call to <code>draw_*</code> should be between <code><a title="gamelib.draw_begin" href="#gamelib.draw_begin">_GameThread.draw_begin()</a></code> and <code><a title="gamelib.draw_end" href="#gamelib.draw_end">_GameThread.draw_end()</a></code>.</p>
+<p>Any call to <code>draw_*</code> should be between <code><a title="gamelib.draw_begin" href="#gamelib.draw_begin">draw_begin()</a></code> and <code><a title="gamelib.draw_end" href="#gamelib.draw_end">draw_end()</a></code>.</p>
 <h2 id="example">Example</h2>
 <pre><code>gamelib.draw_begin()
 gamelib.draw_rectangle(0, 0, 10, 10, fill='red')
@@ -504,8 +504,8 @@ It may be any combination of <code>n</code> (North), <code>s</code> (South), <co
 <span>def <span class="ident">get_events</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get the list of <code><a title="gamelib.Event" href="#gamelib.Event">Event</a></code>s that happened since the last call to <code><a title="gamelib.get_events" href="#gamelib.get_events">_GameThread.get_events()</a></code>.</p>
-<p>This function is normally used in combination with <code><a title="gamelib.loop" href="#gamelib.loop">_GameThread.loop()</a></code>, in action games.</p>
+<div class="desc"><p>Get the list of <code><a title="gamelib.Event" href="#gamelib.Event">Event</a></code>s that happened since the last call to <code><a title="gamelib.get_events" href="#gamelib.get_events">get_events()</a></code>.</p>
+<p>This function is normally used in combination with <code><a title="gamelib.loop" href="#gamelib.loop">loop()</a></code>, in action games.</p>
 <h2 id="example">Example</h2>
 <pre><code>while gamelib.loop(fps=30):
     # this is executed 30 times per second
@@ -616,7 +616,7 @@ The default is <code>info</code>.</p></div>
 <dd>
 <div class="desc"><p>Wait until the next <code><a title="gamelib.Event" href="#gamelib.Event">Event</a></code>: a key is pressed/released, the mouse is moved, etc,
 and return it.</p>
-<p>This function is normally used in combination with <code><a title="gamelib.is_alive" href="#gamelib.is_alive">_GameThread.is_alive()</a></code>,
+<p>This function is normally used in combination with <code><a title="gamelib.is_alive" href="#gamelib.is_alive">is_alive()</a></code>,
 in turn-based games.</p>
 <h2 id="args">Args</h2>
 <dl>
@@ -664,11 +664,11 @@ Also supports 4 and 5 for when the mouse wheel is scrolled up or down.</dd>
 <a href="https://anzeljg.github.io/rin2/book2/2405/docs/tkinter/event-handlers.html">Tkinter Event class</a>.
 Any of the <code>tk.Event</code> attributes can be accessed through this object.</p>
 <h2 id="see-also">See also</h2>
-<p><code><a title="gamelib.wait" href="#gamelib.wait">_GameThread.wait()</a></code>, <code><a title="gamelib.get_events" href="#gamelib.get_events">_GameThread.get_events()</a></code></p></div>
+<p><code><a title="gamelib.wait" href="#gamelib.wait">wait()</a></code>, <code><a title="gamelib.get_events" href="#gamelib.get_events">get_events()</a></code></p></div>
 </dd>
 <dt id="gamelib.EventType"><code class="flex name class">
 <span>class <span class="ident">EventType</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>An enumeration of the different types of <code><a title="gamelib.Event" href="#gamelib.Event">Event</a></code>s supported by gamelib.</p></div>
@@ -702,10 +702,10 @@ Any of the <code>tk.Event</code> attributes can be accessed through this object.
 </dd>
 <dt id="gamelib.MessageType"><code class="flex name class">
 <span>class <span class="ident">MessageType</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration of the different types of message boxes supported by <code><a title="gamelib.say" href="#gamelib.say">_GameThread.say()</a></code>.</p></div>
+<div class="desc"><p>An enumeration of the different types of message boxes supported by <code><a title="gamelib.say" href="#gamelib.say">say()</a></code>.</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>enum.Enum</li>

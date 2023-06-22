@@ -62,6 +62,14 @@ class InvalidMessageType(Exception):
         super().__init__(f"Invalid type message type. The valid types are: {', '.join([msgtype.name.lower() for msgtype in MessageType])}")
 
 
+class InvalidDrawCall(Exception):
+    "The user used a `draw_*()` function outside of a draw_begin()/draw_end() cycle."
+
+    def __init__(self, func_name) -> None:
+
+        super().__init__(f"Drawing function {func_name} should be called between {draw_begin.__name__}() and {draw_end.__name__}()")
+
+
 class EventType(Enum):
     "An enumeration of the different types of `Event`s supported by gamelib."
 
@@ -207,7 +215,8 @@ class _TkWindow(tk.Tk):
 
         super().__init__()
 
-        self.closed: bool = False
+        self._closed: bool = False
+        self._drawing: bool = False
 
         self.title("Gamelib+")
         self.resizable(False, False)
@@ -232,15 +241,20 @@ class _TkWindow(tk.Tk):
     def close(self) -> None:
         "Ultimately closes window."
 
-        self.closed = True
+        self._closed = True
         self.quit()
         self.update()
+
+    def update(self) -> None:
+        "Enter event loop until all pending events have been processed by Tcl."
+        self._drawing = False
+        super().update()
 
 
     def notify(self) -> None:
         "Generates a <notify> event."
 
-        if not self.closed:
+        if not self._closed:
             self.event_generate("<<notify>>", when="tail")
 
 
@@ -277,6 +291,13 @@ class _TkWindow(tk.Tk):
         _GameThread.events.put(Event(tkevent))
 
 
+    def _check_drawing_capability(self, func_name: str) -> None:
+        "Checks if draw_* functions can be called. If not it raises an exception."
+
+        if not self._drawing:
+            raise InvalidDrawCall(func_name=func_name)
+
+
     def resize(self, w: int, h: int) -> None:
         "Resizes the canvas, and in this case, also the window."
 
@@ -288,6 +309,8 @@ class _TkWindow(tk.Tk):
         Clears all elements in the canvas except the sub-windows.
         Set `full` to `True` for this.
         """
+
+        self._drawing = True
 
         for tag in ("text", "figure", "image") + (("window") if full else ()):
             self.canvas.delete(tag)
@@ -302,12 +325,14 @@ class _TkWindow(tk.Tk):
     def draw_image(self, path: str, x: int, y: int, anchor: str="nw") -> None:
         "Draws an image in the canvas."
 
+        self._check_drawing_capability(f"{draw_image.__name__}()")
         self.canvas.create_image(x, y, anchor=anchor, image=self.get_image(path), tag="image")
 
 
     def draw(self, type: str, args, kwargs) -> None:
         "Draws a figure in the canvas."
 
+        self._check_drawing_capability(f"draw_{type}()")
         options = {"fill": "white", "tag": "figure"}
         options.update(kwargs)
         getattr(self.canvas, f"create_{type}")(*args, **options)
@@ -316,6 +341,7 @@ class _TkWindow(tk.Tk):
     def draw_button(self, x: int, y: int, options) -> None:
         "Draws a button in the canvas."
 
+        self._check_drawing_capability(f"{draw_button.__name__}()")
         if "image" in options:
             options["image"] = self.get_image(options["image"])
 
@@ -328,6 +354,7 @@ class _TkWindow(tk.Tk):
     def draw_text(self, text: str, x: int, y: int, font: str, size: int, bold: True, italic: True, kwargs) -> None:
         "Draws text lines in the canvas."
 
+        self._check_drawing_capability(f"{draw_text.__name__}()")
         options = {"fill": "white"}
         options.update(kwargs)
         self.canvas.create_text(x, y, text=text, font=self.get_font(font, size, bold, italic), tag="text", **options)
@@ -605,9 +632,9 @@ class _GameThread(Thread):
             return None
         while True:
             event = _GameThread.events.get()
-            if any((not event, not event_types,
-                   (isinstance(event_types, EventType) and event.type == event_types),
-                   (isinstance(event_types, Tuple) and event.type in event_types))):
+            if (not event or not event_types or
+                (isinstance(event_types, EventType) and event.type == event_types) or
+                (isinstance(event_types, Tuple) and event.type in event_types)):
                 return event
 
 
